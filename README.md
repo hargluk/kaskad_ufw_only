@@ -11,20 +11,18 @@
 | Использует `iptables` + `iptables-persistent` | Работает через **UFW** (без дополнительных пакетов) |
 | Правила хранятся в `iptables-save` | Все правила добавляются прямо в `/etc/ufw/before.rules` |
 | Ручное управление цепочками, возможны конфликты с UFW | Полная совместимость с UFW, не нарушает стандартные правила |
-| При удалении правила удаляются не все строки (могут оставаться маркеры) | Гарантированное удаление всех строк, относящихся к правилу |
-| Порт SSH не всегда сохранялся при полном сбросе | Порт 22 всегда остаётся открытым |
 
 ## 🚀 Быстрая установка
 
 **Одной командой (рекомендуется):**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/ваш-логин/kaskad/main/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh | sudo bash
 ```
 
 Или через wget:
 ```bash
-wget -qO- https://raw.githubusercontent.com/ваш-логин/kaskad/main/install.sh | sudo bash
+wget -qO- https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh | sudo bash
 ```
 
 После первого запуска скрипт сам скопирует себя в /usr/local/bin/gokaskad – в дальнейшем вызывайте его просто командой
@@ -34,7 +32,7 @@ sudo gokaskad.
 
 Пошаговая установка с сохранением файла
 ```bash
-wget -O install.sh https://raw.githubusercontent.com/ваш-логин/kaskad/main/install.sh && chmod +x install.sh && sudo ./install.sh
+wget -O install.sh https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh && chmod +x install.sh && sudo ./install.sh
 ```
 ##📋 Возможности
 Настройка проброса для UDP (WireGuard, AmneziaWG, OpenVPN) и TCP (VLESS, XRay, MTProto)
