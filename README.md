@@ -34,7 +34,7 @@ sudo gokaskad.
 ```bash
 wget -O install.sh https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh && chmod +x install.sh && sudo ./install.sh
 ```
-##📋 Возможности
+📋 Возможности
 Настройка проброса для UDP (WireGuard, AmneziaWG, OpenVPN) и TCP (VLESS, XRay, MTProto)
 
 Кастомные правила – разные входящий и исходящий порты (например, для SSH, RDP)
@@ -49,7 +49,7 @@ wget -O install.sh https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/ref
 
 Порт 22 всегда открыт, даже после полной очистки
 
-##🧪 Пример: проброс WireGuard
+🧪 Пример: проброс WireGuard
 На зарубежном сервере работает WireGuard (UDP, порт 4999, IP 104.165.244.155).
 
 Запустите скрипт на вашем VPS, выберите пункт меню 1 (UDP).
@@ -58,7 +58,7 @@ wget -O install.sh https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/ref
 
 Готово! Теперь в настройках клиента укажите IP вашего VPS вместо оригинального зарубежного IP.
 
-##🛠 Управление правилами
+🛠 Управление правилами
 После запуска скрипта появится меню:
 
 Настроить AmneziaWG / WireGuard (UDP)
@@ -77,12 +77,14 @@ wget -O install.sh https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/ref
 
 Выход
 
-##🔧 Требования
+🔧 Требования
 Ubuntu / Debian (или любой дистрибутив с UFW)
 
 Права root (скрипт сам проверит)
 
 Доступ в интернет (для установки UFW, если он не установлен)
 
-##📄 Лицензия
+📄 Лицензия
 Скрипт предназначен только для личного некоммерческого использования. Оригинальная идея принадлежит anten‑ka/kaskad. Данный форк не распространяется публично.
+
+Создано без знаний програмирования, мучением китайского агента ИИ
