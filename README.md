@@ -18,16 +18,6 @@
 
 ## 🚀 Быстрая установка
 
-**Одной командой (рекомендуется):**
-
-```bash
-curl -sSL https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh | sudo bash
-```
-
-Или через wget:
-```bash
-wget -qO- https://raw.githubusercontent.com/hargluk/kaskad_ufw_only/refs/heads/main/install_clean.sh | sudo bash
-```
 
 После первого запуска скрипт сам скопирует себя в /usr/local/bin/gokaskad – в дальнейшем вызывайте его просто командой
 ```bash
