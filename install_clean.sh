@@ -35,28 +35,60 @@ prepare_system() {
         apt update -y && apt install -y ufw
     fi
 
-    ufw --force enable
-    ufw allow 22/tcp >/dev/null 2>&1
-
-    # Разрешаем forward в настройках UFW
-    sed -i 's/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT"/' /etc/default/ufw
-
-    # Убеждаемся, что в before.rules есть секции *nat и *filter
-    if ! grep -q "^\*nat" /etc/ufw/before.rules; then
-        echo -e "\n*nat\n:PREROUTING ACCEPT [0:0]\n:POSTROUTING ACCEPT [0:0]\nCOMMIT\n" >> /etc/ufw/before.rules
+    # --- Бэкап before.rules ---
+    if [ -f /etc/ufw/before.rules ]; then
+        cp /etc/ufw/before.rules "/etc/ufw/before.rules.bak.$(date +%Y%m%d_%H%M%S)"
     fi
-    if ! grep -q "^\*filter" /etc/ufw/before.rules; then
-        cat >> /etc/ufw/before.rules << "EOF"
 
+    # --- Проверяем, что в before.rules есть стандартные правила UFW ---
+    # Если файла нет или в нём нет ключевых правил (loopback, conntrack),
+    # восстанавливаем эталон из /usr/share/ufw/before.rules
+    if [ ! -f /etc/ufw/before.rules ] || \
+       ! grep -q "ctstate RELATED,ESTABLISHED" /etc/ufw/before.rules || \
+       ! grep -q "allow all on loopback" /etc/ufw/before.rules; then
+        echo -e "${YELLOW}Восстанавливаем стандартный before.rules из пакета UFW...${NC}"
+        if [ -f /usr/share/ufw/before.rules ]; then
+            cp /usr/share/ufw/before.rules /etc/ufw/before.rules
+        else
+            # На случай, если шаблон не найден — хотя бы базовые правила
+            cat > /etc/ufw/before.rules << 'EOF'
 *filter
 :ufw-before-input - [0:0]
 :ufw-before-output - [0:0]
 :ufw-before-forward - [0:0]
 :ufw-not-local - [0:0]
-# ... остальные стандартные правила UFW будут добавлены при переустановке.
+
+-A ufw-before-input -i lo -j ACCEPT
+-A ufw-before-output -o lo -j ACCEPT
+-A ufw-before-input -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-output -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-input -p icmp --icmp-type echo-request -j ACCEPT
+COMMIT
+
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
 COMMIT
 EOF
+        fi
     fi
+
+    # --- Убеждаемся, что секции *nat и *filter существуют (добавляем только если их нет) ---
+    if ! grep -q "^\*nat" /etc/ufw/before.rules; then
+        echo -e "\n*nat\n:PREROUTING ACCEPT [0:0]\n:POSTROUTING ACCEPT [0:0]\nCOMMIT\n" >> /etc/ufw/before.rules
+    fi
+    # *filter теперь гарантированно есть после восстановления, но на всякий случай:
+    if ! grep -q "^\*filter" /etc/ufw/before.rules; then
+        echo -e "\n*filter\n:ufw-before-input - [0:0]\n:ufw-before-output - [0:0]\n:ufw-before-forward - [0:0]\n:ufw-not-local - [0:0]\nCOMMIT\n" >> /etc/ufw/before.rules
+    fi
+
+    # Разрешаем forward в настройках UFW
+    sed -i 's/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT"/' /etc/default/ufw
+
+    # Включаем UFW (если ещё не включён)
+    ufw --force enable
+    ufw allow 22/tcp >/dev/null 2>&1
+    ufw reload
 }
 
 # --- Функция добавления правила (вставляем перед последним COMMIT в каждой секции) ---
